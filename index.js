@@ -20,16 +20,16 @@ module.exports = class {
       moduleNames.forEach((moduleName, i, a) => {
         if (i === 0 && a[0] === true)
           return;
-        if (a[0] !== false) {
-          if (moduleName instanceof Array) {
-            hook(moduleName);
-            return;
-          }
-          const absolutePath = getFullFileName(moduleName),
-            requiredName = require.resolve(absolutePath),
-            name = moduleName.replace(/\.\//, '');
-          this[name] = require(requiredName);
+        if (moduleName instanceof Array) {
+          hook(moduleName);
+          return;
+        }
+        const absolutePath = getFullFileName(moduleName),
+          requiredName = require.resolve(absolutePath),
+          name = moduleName.replace(/\.\//, '');
+        this[name] = require(requiredName);
 
+        if (a[0] !== false) {
           fs.watch(absolutePath + '.js', () => {
             delete require.cache[requiredName];
             this[name] = require(requiredName);
